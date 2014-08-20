@@ -31,7 +31,7 @@ public class Map {
 		this.width = width;
 	}
 
-	public Map(int height, int width) {
+	public Map(int width, int height) {
 		super();
 		this.height = height;
 		this.width = width;
