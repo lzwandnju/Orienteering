@@ -14,7 +14,9 @@ public class Orienteering {
 	 */
 	public static void main(String[] args) {
 		// TODO Auto-generated method stub
-
+		Map m=new Map(3,3);
+		m.createMap();
+		m.showMap();
 	}
 
 }

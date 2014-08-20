@@ -14,4 +14,11 @@
 	<natures>
 		<nature>org.eclipse.jdt.core.javanature</nature>
 	</natures>
+	<linkedResources>
+		<link>
+			<name>Spec</name>
+			<type>1</type>
+			<location>C:/Users/Dell/Desktop/Exam1.txt</location>
+		</link>
+	</linkedResources>
 </projectDescription>
