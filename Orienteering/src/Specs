@@ -8,7 +8,7 @@ However, the players have to pass all the checkpoints (@) on the map.
 
 An orienteering map is to be given in the following format. 
 
-######## 
+########
 #@....G#
 ##.##@##
 #..@..S#
@@ -108,33 +108,6 @@ public static void main(String[] args) {
 
 Write the "main" function of the "Orienteering" class, included in given skeleton. 
 
-If some C++ standard libraries and members are necessary, add them to the skeleton. 
-You can implement them on other files, but describe them not to cause compile errors with given 
-compile option. 
-
-<Skeleton Code of C++> 
-class Orienteering {
-public:
-void main();
-}; 
-
-
-void Orienteering::main() {
-// TODO: Implement this function
-} 
-
-int main(int argc, char* argv[]) {
-Orienteering o;
-o.main();
-return 0;
-
-} 
-
-
-<Compile Options> 
-The codes you have submitted are to be compiled by the following command. 
-g++ -std=c++11 -O2 -o a.out orienteering.cpp 
-
 
 
 Evaluation Criteria 
@@ -174,11 +147,11 @@ Result path (x, y): (1, 2) => (1, 1) => (2, 1) => (3, 1) => (3, 2). The result d
 
 
 5 5 
-##### 
+#####
 #.@@#
-#S### 
-#..G# 
-##### 
+#S###
+#..G#
+#####
 
 
 <Output> 
@@ -194,11 +167,11 @@ correct because the problem specifications allow to pass the same block for mult
 Example3 
 <Input> 
 5 5 
-##### 
-#S..# 
-##G## 
+#####
+#S..#
+##G##
 #..@#
-##### 
+#####
 
 
 <Output> 

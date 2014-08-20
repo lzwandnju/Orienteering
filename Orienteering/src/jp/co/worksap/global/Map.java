@@ -3,7 +3,11 @@
  */
 package jp.co.worksap.global;
 
-import java.util.Scanner;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Dell
@@ -12,23 +16,22 @@ import java.util.Scanner;
 public class Map {
 
 	private char[][] map;
-	private int height;
-	private int width;
+	private List<Position> checkpoint;
+	private final int height;
+	private final int width;
+	private Position start;
+	private Position goal;
 
 	public int getHeight() {
 		return height;
-	}
-
-	public void setHeight(int height) {
-		this.height = height;
 	}
 
 	public int getWidth() {
 		return width;
 	}
 
-	public void setWidth(int width) {
-		this.width = width;
+	public Position getGoal() {
+		return goal;
 	}
 
 	public Map(int width, int height) {
@@ -36,32 +39,55 @@ public class Map {
 		this.height = height;
 		this.width = width;
 		map = new char[height][width];
-	}
-
-	public void createMap() {
-		Scanner sc = new Scanner(System.in);
+		checkpoint = new ArrayList<Position>();
+		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int i = 0;
 		while (i < this.height) {
+			int j = 0;
+			while (j < this.width) {
+				int c;
+				try {
+					c = br.read();
+					if (c != '\n' && c != '\r') {
+						map[i][j] = (char) c;
+						if (c == '@')
+							checkpoint.add(new Position(i, j));
+						if (c == 'S')
+							this.start = new Position(i, j);
+						if (c == 'G')
+							this.goal = new Position(i, j);
+					} else
+						continue;
+				} catch (IOException e) {
 
-			String str = sc.next();
-			try {
-				if (str.length() > width) {
-					throw new Exception();
-				} else {
-					map[i++] = str.toCharArray();
 				}
-			} catch (Exception e) {
-				System.out.println("Input width is more that Specified("
-						+ this.width + ") ...Please Try Again");
+				j++;
 			}
+			i++;
 		}
-		sc.close();
 	}
 
 	public void showMap() {
 		for (int i = 0; i < this.height; i++) {
-			System.out.println(map[i]);
+			for (int j = 0; j < this.width; j++) {
+				System.out.print(map[i][j]);
+			}
+			System.out.println();
 		}
 	}
 
+	public Position getStart() {
+		return start;
+	}
+
+	public void setStart(Position start) {
+		this.start = start;
+	}
+	public void updateMap(Position p, char ch){
+		map[p.getRow()][p.getCol()]=ch;
+	}
+
+	public char getChar(Position p){
+		return this.map[p.getRow()][p.getCol()];
+	}
 }
