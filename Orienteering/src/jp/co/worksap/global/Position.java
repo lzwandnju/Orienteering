@@ -1,6 +1,6 @@
 package jp.co.worksap.global;
 
-public class Position implements Comparable<Position>{
+public class Position implements Comparable<Position> {
 
 	private int row;
 	private int col;
@@ -34,14 +34,15 @@ public class Position implements Comparable<Position>{
 			return false;
 	}
 
-	public Position getPosition(){
-		return this;
-	}
 	public static int distance(Position p1, Position p2) {
 		return (Math.abs(p1.getRow() - p2.getRow()) + Math.abs(p2.getCol()
-				+ p1.getCol()));
+				- p1.getCol()));
 	}
-
+	
+	public static void showPosition(Position p){
+		System.out.println("["+p.getRow()+"]["+p.getCol()+"]");
+	}
+	
 	@Override
 	public int compareTo(Position o) {
 		// TODO Auto-generated method stub

@@ -17,6 +17,10 @@ public class Map {
 
 	private char[][] map;
 	private List<Position> checkpoint;
+	public List<Position> getCheckpoint() {
+		return checkpoint;
+	}
+
 	private final int height;
 	private final int width;
 	private Position start;
@@ -65,6 +69,7 @@ public class Map {
 			}
 			i++;
 		}
+		
 	}
 
 	public void showMap() {
@@ -83,6 +88,7 @@ public class Map {
 	public void setStart(Position start) {
 		this.start = start;
 	}
+	
 	public void updateMap(Position p, char ch){
 		map[p.getRow()][p.getCol()]=ch;
 	}
