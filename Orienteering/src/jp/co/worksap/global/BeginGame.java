@@ -8,7 +8,7 @@ public class BeginGame {
 	private boolean[][] visited;
 	private Heuristic heuristic;
 	private Position currentCheckpoint;
-	
+
 	public BeginGame(int w, int h) {
 		map = new Map(w, h);
 		visited = new boolean[h][w];
@@ -17,8 +17,9 @@ public class BeginGame {
 				visited[i][j] = false;
 			}
 		}
-		heuristic=new Heuristic(map.getCheckpoint(), map.getStart(), map.getGoal());
-		for(Position  p:heuristic.getHeuristicTable().keySet()){
+		heuristic = new Heuristic(map.getCheckpoint(), map.getStart(),
+				map.getGoal());
+		for (Position p : heuristic.getHeuristicTable().keySet()) {
 			Position.showPosition(p);
 			System.out.println(heuristic.getHeuristicTable().get(p));
 		}
@@ -99,7 +100,7 @@ public class BeginGame {
 		boolean hasfound = false;
 		visited[map.getStart().getRow()][map.getStart().getCol()] = true;
 		PriorityQueue<Position> pq = new PriorityQueue<Position>();
-		
+
 		if (map.getChar(getUPPosition(map.getStart())) == '.') {
 			pq.add(getUPPosition(map.getStart()));
 			visited[getUPPosition(map.getStart()).getRow()][getUPPosition(
@@ -122,55 +123,76 @@ public class BeginGame {
 			visited[getRightPosition(map.getStart()).getRow()][getRightPosition(
 					map.getStart()).getCol()] = true;
 		}
-		
+
 		while (hasReached(p) == false) {
 			Position newposition = pq.remove();
 			move(newposition);
 			Position temp = getUPPosition(newposition);
 			if (map.getChar(temp) == '.'
 					&& visited[temp.getRow()][temp.getCol()] == false) {
-				pq.add(temp);
-				moveUP();
-				//map.showMap();
-				hasfound = true;
-				visited[temp.getRow()][temp.getCol()] = true;
+				if (heuristic.heuristicFunction(temp, p, map.getGoal()) < heuristic
+						.getHeuristicValue(p)) {
+					pq.add(temp);
+					moveUP();
+					heuristic.updateHeuristic(map.getStart());
+					// map.showMap();
+					hasfound = true;
+					visited[temp.getRow()][temp.getCol()] = true;
+				}
+
 				System.out.println();
 			}
 			temp = getDownPosition(newposition);
 			if (map.getChar(temp) == '.'
 					&& visited[temp.getRow()][temp.getCol()] == false) {
-				pq.add(temp);
-				moveDOWN();
-				//map.showMap();
-				hasfound = true;
-				visited[temp.getRow()][temp.getCol()] = true;
+
+				if (heuristic.heuristicFunction(temp, p, map.getGoal()) < heuristic
+						.getHeuristicValue(p)) {
+					pq.add(temp);
+					moveDOWN();
+					heuristic.updateHeuristic(map.getStart());
+					// map.showMap();
+					hasfound = true;
+					visited[temp.getRow()][temp.getCol()] = true;
+				}
+
 				System.out.println();
 			}
 			temp = getLeftPosition(newposition);
 			if (map.getChar(temp) == '.'
 					&& visited[temp.getRow()][temp.getCol()] == false) {
-				pq.add(temp);
-				moveLEFT();
-				//map.showMap();
-				hasfound = true;
-				visited[temp.getRow()][temp.getCol()] = true;
+
+				if (heuristic.heuristicFunction(temp, p, map.getGoal()) < heuristic
+						.getHeuristicValue(p)) {
+					pq.add(temp);
+					moveLEFT();
+					heuristic.updateHeuristic(map.getStart());
+					// map.showMap();
+					hasfound = true;
+					visited[temp.getRow()][temp.getCol()] = true;
+				}
+
 				System.out.println();
 			}
 			temp = getRightPosition(newposition);
 			if (map.getChar(temp) == '.'
 					&& visited[temp.getRow()][temp.getCol()] == false) {
-				pq.add(temp);
-				moveRIGHT();
-				//map.showMap();
-				hasfound = true;
-				visited[temp.getRow()][temp.getCol()] = true;
+				if (heuristic.heuristicFunction(temp, p, map.getGoal()) < heuristic
+						.getHeuristicValue(p)) {
+					pq.add(temp);
+					moveRIGHT();
+					heuristic.updateHeuristic(map.getStart());
+					// map.showMap();
+					hasfound = true;
+					visited[temp.getRow()][temp.getCol()] = true;
+				}
+
 				System.out.println();
 			}
 			/*
-			 * not even a single move is possible
-			 * Possible when
-			 * 1. S is bounded by closed path on all sides
-			 * 2. S has visited all the paths in its vicinity
+			 * not even a single move is possible Possible when 1. S is bounded
+			 * by closed path on all sides 2. S has visited all the paths in its
+			 * vicinity
 			 */
 			if (hasfound == false) {
 				if (map.getChar(getUPPosition(newposition)) != '.'
@@ -201,8 +223,8 @@ public class BeginGame {
 	 */
 
 	public void start() {
-		//for(Position p:map.getCheckpoint())
-			Search(map.getGoal());
+		// for(Position p:map.getCheckpoint())
+		Search(map.getGoal());
 	}
 
 }
