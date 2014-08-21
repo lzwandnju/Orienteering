@@ -15,7 +15,7 @@ public class Orienteering {
 	 * @param args
 	 */
 	public static void main(String[] args) {
-		new BeginGame(5, 5).start();
+		new BeginGame(8, 6).start();
 	}
 
 }
