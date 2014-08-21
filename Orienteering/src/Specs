@@ -13,7 +13,7 @@ An orienteering map is to be given in the following format.
 ##.##@##
 #..@..S#
 #@.....#
-######## 
+########
 
 
 In this problem, an orienteering map is to be given. 
@@ -124,10 +124,10 @@ This problem is to be evaluated by following criteria.
 In these examples, the origin of coordinates is left-upper corner, and is described as (0, 0). The direction of positive X-Axis is to right and positive Y-Axis is to down. 
 Example1 <Input> 
 5 4 
-##### 
-#...# 
-#S#G# 
-##### 
+#####
+#...#
+#S#G#
+#####
 
 
 <Output> 
