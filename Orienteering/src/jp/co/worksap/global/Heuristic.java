@@ -29,6 +29,13 @@ public class Heuristic implements Comparator<Position> {
 		}
 	}
 
+	public void incChkHeuristic(Position checkPoint){
+		heuristicTable.put(checkPoint, heuristicTable.get(checkPoint)+1);
+	}
+	public void incGoalHeuristic(){
+		goalHeuristic++;
+	}
+	
 	public int getGoalHeuristic() {
 		return goalHeuristic;
 	}

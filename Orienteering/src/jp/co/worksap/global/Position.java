@@ -27,12 +27,27 @@ public class Position implements Comparable<Position> {
 		this.col = col;
 	}
 
-	public boolean equals(Position p) {
-		if (this.row == p.row && this.col == p.col)
-			return true;
-		else
-			return false;
-	}
+	@Override
+    public boolean equals(Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj == null || obj.getClass() != this.getClass()) {
+            return false;
+        }
+        Position guest = (Position) obj;
+        return (this.row==guest.row && this.col==guest.col);
+    }
+
+	@Override
+    public int hashCode() {
+        int hash = 1;
+        hash = hash * 17 >> row;
+        hash = hash * 31 >> col;
+        hash = hash % (row<<col);
+        return hash;
+    }
+
 
 	public static int distance(Position p1, Position p2) {
 		return (Math.abs(p1.getRow() - p2.getRow()) + Math.abs(p2.getCol()
@@ -42,10 +57,12 @@ public class Position implements Comparable<Position> {
 	public static void showPosition(Position p){
 		System.out.println("["+p.getRow()+"]["+p.getCol()+"]");
 	}
-	
+
 	@Override
 	public int compareTo(Position o) {
+		if(this.equals(o)==true) return 0;
+		else return -1;
 		// TODO Auto-generated method stub
-		return 0;
 	}
+	
 }
