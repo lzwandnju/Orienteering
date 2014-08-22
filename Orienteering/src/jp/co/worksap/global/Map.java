@@ -53,7 +53,7 @@ public class Map {
 			int j = 0;
 			while (j < this.width) {
 				int c;
-				covered[i][j]=false;
+				covered[i][j] = false;
 				try {
 					c = br.read();
 					if (c != '\n' && c != '\r') {
@@ -76,11 +76,8 @@ public class Map {
 			}
 			i++;
 		}
-		
 
 	}
-
-	
 
 	public boolean[][] getCovered() {
 		return covered;
@@ -109,6 +106,9 @@ public class Map {
 		this.start = start;
 	}
 
+	/*
+	 * Place a given character in a given position
+	 */
 	public void updateMap(Position p, char ch) {
 		map[p.getRow()][p.getCol()] = ch;
 	}

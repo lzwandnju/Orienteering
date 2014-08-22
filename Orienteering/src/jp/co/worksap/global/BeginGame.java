@@ -18,12 +18,20 @@ public class BeginGame {
 		InitVisited();
 		heuristic = new Heuristic(map.getCheckpoint(), map.getStart(),
 				map.getGoal());
+		showCheckPointDetails(heuristic);
+	}
+
+	public static void showCheckPointDetails(Heuristic heuristic) {
 		for (Position p : heuristic.getHeuristicTable().keySet()) {
 			Position.showPosition(p);
-			// System.out.println(heuristic.getHeuristicTable().get(p));
+			System.out.println("Heuristic Value= "
+					+ heuristic.getHeuristicTable().get(p));
 		}
 	}
 
+	/*
+	 * Making all the nodes as not visited
+	 */
 	public void InitVisited() {
 		for (int i = 0; i < map.getHeight(); i++) {
 			for (int j = 0; j < map.getWidth(); j++) {
@@ -37,44 +45,18 @@ public class BeginGame {
 	 * position
 	 */
 
-	public void move(Movement m, char ch) {
-		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), ch);
-		switch (m) {
-		case UP: {
-			map.setStart(new Position(map.getStart().getRow() - 1, map
-					.getStart().getCol()));
-			break;
-		}
-		case DOWN: {
-			map.setStart(new Position(map.getStart().getRow() + 1, map
-					.getStart().getCol()));
-			break;
-		}
-		case LEFT: {
-			map.setStart(new Position(map.getStart().getRow(), map.getStart()
-					.getCol() - 1));
-			break;
-		}
-		case RIGHT: {
-			map.setStart(new Position(map.getStart().getRow(), map.getStart()
-					.getCol() + 1));
-			break;
-		}
-		}
-		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), 'S');
-
-	}
-
 	public void move(Position newposition, char ch) {
 		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), ch);
+				.getCol()), '.');
 		map.setStart(newposition);
-		//Goal should not be moved from its position 
-		if(ch!='G') map.updateMap(newposition, 'S');
+		// Goal should not be moved from its position
+		if (ch != 'G')
+			map.updateMap(newposition, 'S');
 	}
 
+	/*
+	 * Get the Position of S after Movement M from Position P
+	 */
 	public Position getPosition(Position p, Movement m) {
 		switch (m) {
 		case UP: {
@@ -111,123 +93,80 @@ public class BeginGame {
 	 * the heuristic value of current position then only that move is made
 	 */
 
-	
-	public int Search(Position p) {
-
-		boolean hasFound = false;
-		/*
-		 * this path is taken when there is no position which will give less
-		 * value of the admissible heuristic function
-		 */
-		boolean reluctantPath = false;
+	public int SearchCheckpoint(Position p) {
 		visited[map.getStart().getRow()][map.getStart().getCol()] = true;
 		PriorityQueue<Position> pq = new PriorityQueue<Position>();
-		Position temp;
-
+		Position temp, newposition;
+		boolean reluctantPath = false;
 		while (hasReached(p) == false) {
-
-			if (pq.isEmpty() == true) {
-
-				for (Movement m : Movement.values()) {
-					temp = getPosition(map.getStart(), m);
-					if (map.getChar(temp) != '#') {
+			boolean hasFound = false;
+			if (pq.isEmpty() == true)
+				newposition = map.getStart();
+			else
+				newposition = pq.remove();
+			for (Movement m : Movement.values()) {
+				temp = getPosition(newposition, m);
+				if ((map.getChar(temp) != '#')
+						&& visited[getPosition(temp, m).getRow()][getPosition(
+								temp, m).getCol()] == false) {
+					/*
+					 * CHeck if the next movement will decrease the heuristic
+					 * value or if there is a checkpoint there
+					 */
+					if (heuristic.heuristicFunction(temp, p, map.getGoal()) <= heuristic
+							.getHeuristicValue(p) || map.getChar(temp) == '@') {
+						pq.add(temp);
+						hasFound = true;
+						heuristic.setCheckPointHeuristic(temp);
+						heuristic.setGoalHeuristic(temp);
 						if (map.getChar(temp) == '@') {
-							pq.add(temp);
-							coverCheckPoint(temp);
-							map.showMap();
-							move(m, '.');
-							heuristic.updateHeuristic(map.getStart(), '@');
+							move(temp, map.getChar(temp));
 							visited[temp.getRow()][temp.getCol()] = true;
-						} else {
-							if (heuristic.getHeuristicValue(p) != -1) {
-								if (heuristic.heuristicFunction(temp, p,
-										map.getGoal(), map.getChar(temp)) <= heuristic
-										.getHeuristicValue(p)
-										|| reluctantPath == true) {
-									pq.add(temp);
-									map.showMap();
-									move(m, map.getChar(temp));
-									heuristic.updateHeuristic(map.getStart(),
-											map.getChar(temp));
-									visited[temp.getRow()][temp.getCol()] = true;
-								}
-							}
-
-						}
-					}
-				}
-
-			} else {
-				Position newposition = pq.remove();
-				// move(newposition);
-				for (Movement m : Movement.values()) {
-					temp = getPosition(newposition, m);
-					if ((map.getChar(temp) != '#')
-							&& visited[getPosition(temp, m).getRow()][getPosition(
-									temp, m).getCol()] == false) {
-						/*
-						 * If a checkpoint is found in the vicinity then first
-						 * take that
-						 */
-						if (map.getChar(temp) == '@') {
-
-							pq.add(temp);
-							move(m, '.');
-							coverCheckPoint(temp);
-							heuristic.updateHeuristic(map.getStart(), '@');
 							map.showMap();
-							hasFound = true;
-							visited[temp.getRow()][temp.getCol()] = true;
-
-						} else {
-							if (heuristic.heuristicFunction(temp, p,
-									map.getGoal(), map.getChar(temp)) <= heuristic
-									.getHeuristicValue(p)
-									|| reluctantPath == true) {
-								pq.add(temp);
-								move(m, map.getChar(temp));
-								heuristic.updateHeuristic(map.getStart(),
-										map.getChar(temp));
-								map.showMap();
-								hasFound = true;
-								visited[temp.getRow()][temp.getCol()] = true;
-							}
-
-						}
-
-					}
-				}
-
-				/*
-				 * not even a single move is possible Possible when 1. S is
-				 * bounded by closed path on all sides 2. S has visited all the
-				 * paths in its vicinity
-				 */
-				if (hasFound == false) {
-					for (Movement m : Movement.values()) {
-						if (map.getChar(getPosition(newposition, m)) == '.')
-							hasFound = true;
-					}
-					if (hasFound == true) {
-						for (Movement m : Movement.values()) {
-							if (visited[getPosition(map.getStart(), m).getRow()][getPosition(
-									map.getStart(), m).getCol()] == false) {
-								reluctantPath = true;
-								break;
-							}
-						}
-						if (reluctantPath == false) {
-							InitVisited();
-							visited[map.getStart().getRow()][map.getStart()
-									.getCol()] = true;
+							coverCheckPoint(temp);
+							heuristic.getHeuristicTable().remove(temp);
+							break;
 						}
 					}
 				}
 			}
-		}
+			try {
 
-		move(p, '.');
-		map.showMap();
+				if (map.getCovered()[map.getStart().getRow()][map.getStart()
+						.getCol()] == false) {
+					move(pq.element(), map.getChar(pq.element()));
+					visited[pq.element().getRow()][pq.element().getCol()] = true;
+					map.showMap();
+				}
+				// Thread.sleep(1000);
+			} catch (NullPointerException e) {
+				System.out.println("Queue Empty");
+			}
+			/*
+			 * not even a single move is possible Possible when 1. S is bounded
+			 * by closed path on all sides 2. S has visited all the paths in its
+			 * vicinity
+			 */
+			if (hasFound == false) {
+				for (Movement m : Movement.values()) {
+					if (map.getChar(getPosition(newposition, m)) == '.') {
+						if (visited[getPosition(newposition, m).getRow()][getPosition(
+								newposition, m).getCol()] == false) {
+							reluctantPath = true;
+						}
+						hasFound = true;
+					}
+				}
+				if (reluctantPath == false && hasFound == true) {
+					InitVisited();
+					visited[map.getStart().getRow()][map.getStart().getCol()] = true;
+				} else {
+					if (hasFound == false)
+						return -1;
+					;
+				}
+			}
+		}
 		return 1;
 	}
 
@@ -238,13 +177,16 @@ public class BeginGame {
 	public void start() {
 		map.showMap();
 		for (Position p : map.getCheckpoint()) {
-			if (map.getCovered()[p.getRow()][p.getCol()] == false)
-				Search(p);
+			if (map.getCovered()[p.getRow()][p.getCol()] == false) {
+				System.out.print("Searching for ");
+				Position.showPosition(p);
+				SearchCheckpoint(p);
+				break;
+			}
+
 		}
 		InitVisited();
 		visited[map.getStart().getRow()][map.getStart().getCol()] = true;
-		Search(map.getGoal());
-
+		// Search(map.getGoal());
 	}
-
 }

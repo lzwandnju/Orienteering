@@ -7,58 +7,25 @@ import java.util.List;
 public class Heuristic implements Comparator<Position> {
 
 	private Hashtable<Position, Integer> heuristicTable;
-	Position Goal;
-<<<<<<< HEAD
-=======
-	int goalHeuristic;
+	private Position Goal;
+	private int goalHeuristic;
 
->>>>>>> origin/master
 	public Hashtable<Position, Integer> getHeuristicTable() {
 		return heuristicTable;
 	}
 
 	public Heuristic(List<Position> checkpoint, Position Start, Position Goal) {
 		heuristicTable = new Hashtable<Position, Integer>();
-<<<<<<< HEAD
-		this.Goal=Goal;
-		for (Position p : checkpoint) {
-			heuristicTable.put(p, heuristicFunction(Start, p, Goal));
-		}
-	}
-
-	public void updateHeuristic(Position Start){
-		for (Position p : heuristicTable.keySet()) {
-			heuristicTable.put(p, heuristicFunction(Start, p, Goal));
-		}
-	}
-	
-	public int heuristicFunction(Position startPos, Position checkPoint,
-			Position Goal) {
-		return (Position.distance(startPos, checkPoint) + Position.distance(
-				checkPoint, Goal));
-	}
-
-	public int getHeuristicValue(Position checkpoint){
-		return heuristicTable.get(checkpoint);
-	}
-	
-	@Override
-	public int compare(Position o1, Position o2) {
-		// TODO Auto-generated method stub
-		if(heuristicTable.get(o1)>heuristicTable.get(o2)) return -1;
-		else return 1;
-		//return 0;
-=======
 		this.Goal = Goal;
 		for (Position p : checkpoint) {
-			heuristicTable.put(p, heuristicFunction(Start, p, Goal, '@'));
+			heuristicTable.put(p, heuristicFunction(Start, p, Goal));
 		}
 		goalHeuristic = Position.distance(Start, Goal);
 	}
 
-	public void updateHeuristic(Position Start, char ch) {
+	public void setCheckPointHeuristic(Position Start) {
 		for (Position p : heuristicTable.keySet()) {
-			heuristicTable.put(p, heuristicFunction(Start, p, Goal, ch));
+			heuristicTable.put(p, heuristicFunction(Start, p, Goal));
 		}
 	}
 
@@ -80,24 +47,18 @@ public class Heuristic implements Comparator<Position> {
 	 */
 
 	public int heuristicFunction(Position startPos, Position checkPoint,
-			Position Goal, char ch) {
-		if (ch == '@')
-			return (Position.distance(startPos, checkPoint) + Position
-					.distance(checkPoint, Goal));
-		/* Assertion: No parameter other that @ and G will be passed so else
-		 * condition can be safely applied
-		 */
-		else
-			return Position.distance(startPos, Goal);
+			Position Goal) {
+		return (Position.distance(startPos, checkPoint) + Position.distance(
+				checkPoint, Goal));
 	}
 
+	//Get heuristic value of a checkpoint
 	public int getHeuristicValue(Position checkpoint) {
 		try {
 			return heuristicTable.get(checkpoint);
 		} catch (NullPointerException e) {
 			return -1;
 		}
-
 	}
 
 	@Override
@@ -108,7 +69,6 @@ public class Heuristic implements Comparator<Position> {
 		else
 			return 1;
 		// return 0;
->>>>>>> origin/master
 	}
 
 }
