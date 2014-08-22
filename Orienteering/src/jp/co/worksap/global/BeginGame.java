@@ -299,13 +299,20 @@ public class BeginGame {
 						}
 
 					}
-					pq.add(nextBest);
-					move(nextBest);
-					visitStart();
-					steps++;
-					resultPath.add(nextBest);
-					heuristic.setGoalHeuristic(nextBest);
-					map.showMap();
+					if (nextBest != null) {
+						pq.add(nextBest);
+						move(nextBest);
+						visitStart();
+						steps++;
+						resultPath.add(nextBest);
+						heuristic.setGoalHeuristic(nextBest);
+						map.showMap();
+					} else {
+						for (Movement m : Movement.values()) {
+							visited[getPosition(map.getStart(), m).getRow()][getPosition(
+									map.getStart(), m).getCol()] = false;
+						}
+					}
 
 				}
 			}
@@ -317,6 +324,13 @@ public class BeginGame {
 	}
 
 	public void start() {
+
+		/*
+		 * Validate Map before making any moves 1. Start should not be
+		 * surrounded by # on all sides 2. No Row/Column should be such that
+		 * there is it forms two rectangles with Start on one side and
+		 * Goal/Checkpoint on the other Side
+		 */
 		map.showMap();
 		resultPath.add(map.getStart());
 

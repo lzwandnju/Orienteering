@@ -18,9 +18,9 @@ An orienteering map is to be given in the following format.
 ##############
 #@.@..@#.....#
 ##.SG@####.#.#
-#........#.#@#
+#......#.#.#@#
 #@....@#...#.#
-#..@.....@...#
+#..@...#.@...#
 ##############
 
 In this problem, an orienteering map is to be given. 
