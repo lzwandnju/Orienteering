@@ -17,6 +17,8 @@ public class Map {
 
 	private char[][] map;
 	private List<Position> checkpoint;
+	private boolean[][] covered;
+
 	public List<Position> getCheckpoint() {
 		return checkpoint;
 	}
@@ -44,18 +46,23 @@ public class Map {
 		this.width = width;
 		map = new char[height][width];
 		checkpoint = new ArrayList<Position>();
+		covered = new boolean[this.height][this.width];
 		BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
 		int i = 0;
 		while (i < this.height) {
 			int j = 0;
 			while (j < this.width) {
 				int c;
+				covered[i][j]=false;
 				try {
 					c = br.read();
 					if (c != '\n' && c != '\r') {
 						map[i][j] = (char) c;
-						if (c == '@')
-							checkpoint.add(new Position(i, j));
+						if (c == '@') {
+							Position temp = new Position(i, j);
+							checkpoint.add(temp);
+						}
+
 						if (c == 'S')
 							this.start = new Position(i, j);
 						if (c == 'G')
@@ -70,14 +77,27 @@ public class Map {
 			i++;
 		}
 		
+
+	}
+
+	
+
+	public boolean[][] getCovered() {
+		return covered;
 	}
 
 	public void showMap() {
+		System.out.print("  ");
+		for (int i = 0; i < this.width; i++)
+			System.out.print(i);
+		System.out.println();
 		for (int i = 0; i < this.height; i++) {
+			System.out.print(i + " ");
 			for (int j = 0; j < this.width; j++) {
 				System.out.print(map[i][j]);
 			}
-			System.out.println();
+
+			System.out.println("");
 		}
 	}
 
@@ -88,12 +108,12 @@ public class Map {
 	public void setStart(Position start) {
 		this.start = start;
 	}
-	
-	public void updateMap(Position p, char ch){
-		map[p.getRow()][p.getCol()]=ch;
+
+	public void updateMap(Position p, char ch) {
+		map[p.getRow()][p.getCol()] = ch;
 	}
 
-	public char getChar(Position p){
+	public char getChar(Position p) {
 		return this.map[p.getRow()][p.getCol()];
 	}
 }

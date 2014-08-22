@@ -7,224 +7,244 @@ public class BeginGame {
 	private static Map map;
 	private boolean[][] visited;
 	private Heuristic heuristic;
-	private Position currentCheckpoint;
+
+	enum Movement {
+		UP, DOWN, LEFT, RIGHT
+	}
 
 	public BeginGame(int w, int h) {
 		map = new Map(w, h);
 		visited = new boolean[h][w];
-		for (int i = 0; i < h; i++) {
-			for (int j = 0; j < w; j++) {
-				visited[i][j] = false;
-			}
-		}
+		InitVisited();
 		heuristic = new Heuristic(map.getCheckpoint(), map.getStart(),
 				map.getGoal());
 		for (Position p : heuristic.getHeuristicTable().keySet()) {
 			Position.showPosition(p);
-			System.out.println(heuristic.getHeuristicTable().get(p));
+			// System.out.println(heuristic.getHeuristicTable().get(p));
 		}
 	}
 
-	public void moveUP() {
-		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), '.');
-		map.setStart(new Position(map.getStart().getRow() - 1, map.getStart()
-				.getCol()));
-		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), 'S');
+	public void InitVisited() {
+		for (int i = 0; i < map.getHeight(); i++) {
+			for (int j = 0; j < map.getWidth(); j++) {
+				visited[i][j] = false;
+			}
+		}
 	}
 
-	public void moveDOWN() {
+	/*
+	 * Place appropriate character where S was initially and then place S in new
+	 * position
+	 */
+
+	public void move(Movement m, char ch) {
 		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), '.');
-		map.setStart(new Position(map.getStart().getRow() + 1, map.getStart()
-				.getCol()));
+				.getCol()), ch);
+		switch (m) {
+		case UP: {
+			map.setStart(new Position(map.getStart().getRow() - 1, map
+					.getStart().getCol()));
+			break;
+		}
+		case DOWN: {
+			map.setStart(new Position(map.getStart().getRow() + 1, map
+					.getStart().getCol()));
+			break;
+		}
+		case LEFT: {
+			map.setStart(new Position(map.getStart().getRow(), map.getStart()
+					.getCol() - 1));
+			break;
+		}
+		case RIGHT: {
+			map.setStart(new Position(map.getStart().getRow(), map.getStart()
+					.getCol() + 1));
+			break;
+		}
+		}
 		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
 				.getCol()), 'S');
+
 	}
 
-	public void moveLEFT() {
+	public void move(Position newposition, char ch) {
 		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), '.');
-		map.setStart(new Position(map.getStart().getRow(), map.getStart()
-				.getCol() - 1));
-		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), 'S');
-	}
-
-	public void moveRIGHT() {
-		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), '.');
-		map.setStart(new Position(map.getStart().getRow(), map.getStart()
-				.getCol() + 1));
-		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), 'S');
-	}
-
-	public void move(Position newposition) {
-		map.updateMap(new Position(map.getStart().getRow(), map.getStart()
-				.getCol()), map.getChar(newposition));
+				.getCol()), ch);
 		map.setStart(newposition);
-		map.updateMap(newposition, 'S');
+		//Goal should not be moved from its position 
+		if(ch!='G') map.updateMap(newposition, 'S');
 	}
 
-	public Position getUPPosition(Position p) {
-		return new Position(p.getRow() - 1, p.getCol());
-	}
-
-	public Position getDownPosition(Position p) {
-		return new Position(p.getRow() + 1, p.getCol());
-	}
-
-	public Position getLeftPosition(Position p) {
-		return new Position(p.getRow(), p.getCol() - 1);
-	}
-
-	public Position getRightPosition(Position p) {
-		return new Position(p.getRow(), p.getCol() + 1);
+	public Position getPosition(Position p, Movement m) {
+		switch (m) {
+		case UP: {
+			return new Position(p.getRow() - 1, p.getCol());
+		}
+		case DOWN: {
+			return new Position(p.getRow() + 1, p.getCol());
+		}
+		case LEFT: {
+			return new Position(p.getRow(), p.getCol() - 1);
+		}
+		case RIGHT: {
+			return new Position(p.getRow(), p.getCol() + 1);
+		}
+		}
+		return null;
 	}
 
 	public boolean hasReached(Position p) {
-		if (getUPPosition(map.getStart()).equals(p) == true
-				|| getDownPosition(map.getStart()).equals(p) == true
-				|| getLeftPosition(map.getStart()).equals(p) == true
-				|| getRightPosition(map.getStart()).equals(p) == true) {
+		if (getPosition(map.getStart(), Movement.UP).equals(p) == true
+				|| getPosition(map.getStart(), Movement.DOWN).equals(p) == true
+				|| getPosition(map.getStart(), Movement.LEFT).equals(p) == true
+				|| getPosition(map.getStart(), Movement.RIGHT).equals(p) == true) {
 			return true;
 		} else
 			return false;
 
 	}
 
+	/*
+	 * A* algorithm for finding optimal path to the checkpoint and then the Goal
+	 * In between if any checkpoint is encountered it is take care Basic idea
+	 * here is that only when the heuristic value of the next move is less than
+	 * the heuristic value of current position then only that move is made
+	 */
+
+	
 	public int Search(Position p) {
-		// ap.showMap();
-		boolean hasfound = false;
+
+		boolean hasFound = false;
+		/*
+		 * this path is taken when there is no position which will give less
+		 * value of the admissible heuristic function
+		 */
+		boolean reluctantPath = false;
 		visited[map.getStart().getRow()][map.getStart().getCol()] = true;
 		PriorityQueue<Position> pq = new PriorityQueue<Position>();
-
-		if (map.getChar(getUPPosition(map.getStart())) == '.') {
-			pq.add(getUPPosition(map.getStart()));
-			visited[getUPPosition(map.getStart()).getRow()][getUPPosition(
-					map.getStart()).getCol()] = true;
-
-		}
-		if (map.getChar(getDownPosition(map.getStart())) == '.') {
-			pq.add(getDownPosition(map.getStart()));
-			visited[getDownPosition(map.getStart()).getRow()][getDownPosition(
-					map.getStart()).getCol()] = true;
-
-		}
-		if (map.getChar(getLeftPosition(map.getStart())) == '.') {
-			pq.add(getLeftPosition(map.getStart()));
-			visited[getLeftPosition(map.getStart()).getRow()][getLeftPosition(
-					map.getStart()).getCol()] = true;
-		}
-		if (map.getChar(getRightPosition(map.getStart())) == '.') {
-			pq.add(getRightPosition(map.getStart()));
-			visited[getRightPosition(map.getStart()).getRow()][getRightPosition(
-					map.getStart()).getCol()] = true;
-		}
+		Position temp;
 
 		while (hasReached(p) == false) {
-			Position newposition = pq.remove();
-			move(newposition);
-			Position temp = getUPPosition(newposition);
-			if (map.getChar(temp) == '.'
-					&& visited[temp.getRow()][temp.getCol()] == false) {
-				if (heuristic.heuristicFunction(temp, p, map.getGoal()) < heuristic
-						.getHeuristicValue(p)) {
-					pq.add(temp);
-					moveUP();
-					heuristic.updateHeuristic(map.getStart());
-					// map.showMap();
-					hasfound = true;
-					visited[temp.getRow()][temp.getCol()] = true;
-				}
 
-				System.out.println();
-			}
-			temp = getDownPosition(newposition);
-			if (map.getChar(temp) == '.'
-					&& visited[temp.getRow()][temp.getCol()] == false) {
+			if (pq.isEmpty() == true) {
 
-				if (heuristic.heuristicFunction(temp, p, map.getGoal()) < heuristic
-						.getHeuristicValue(p)) {
-					pq.add(temp);
-					moveDOWN();
-					heuristic.updateHeuristic(map.getStart());
-					// map.showMap();
-					hasfound = true;
-					visited[temp.getRow()][temp.getCol()] = true;
-				}
+				for (Movement m : Movement.values()) {
+					temp = getPosition(map.getStart(), m);
+					if (map.getChar(temp) != '#') {
+						if (map.getChar(temp) == '@') {
+							pq.add(temp);
+							coverCheckPoint(temp);
+							map.showMap();
+							move(m, '.');
+							heuristic.updateHeuristic(map.getStart(), '@');
+							visited[temp.getRow()][temp.getCol()] = true;
+						} else {
+							if (heuristic.getHeuristicValue(p) != -1) {
+								if (heuristic.heuristicFunction(temp, p,
+										map.getGoal(), map.getChar(temp)) <= heuristic
+										.getHeuristicValue(p)
+										|| reluctantPath == true) {
+									pq.add(temp);
+									map.showMap();
+									move(m, map.getChar(temp));
+									heuristic.updateHeuristic(map.getStart(),
+											map.getChar(temp));
+									visited[temp.getRow()][temp.getCol()] = true;
+								}
+							}
 
-				System.out.println();
-			}
-			temp = getLeftPosition(newposition);
-			if (map.getChar(temp) == '.'
-					&& visited[temp.getRow()][temp.getCol()] == false) {
-
-				if (heuristic.heuristicFunction(temp, p, map.getGoal()) < heuristic
-						.getHeuristicValue(p)) {
-					pq.add(temp);
-					moveLEFT();
-					heuristic.updateHeuristic(map.getStart());
-					// map.showMap();
-					hasfound = true;
-					visited[temp.getRow()][temp.getCol()] = true;
-				}
-
-				System.out.println();
-			}
-			temp = getRightPosition(newposition);
-			if (map.getChar(temp) == '.'
-					&& visited[temp.getRow()][temp.getCol()] == false) {
-				if (heuristic.heuristicFunction(temp, p, map.getGoal()) < heuristic
-						.getHeuristicValue(p)) {
-					pq.add(temp);
-					moveRIGHT();
-					heuristic.updateHeuristic(map.getStart());
-					// map.showMap();
-					hasfound = true;
-					visited[temp.getRow()][temp.getCol()] = true;
-				}
-
-				System.out.println();
-			}
-			/*
-			 * not even a single move is possible Possible when 1. S is bounded
-			 * by closed path on all sides 2. S has visited all the paths in its
-			 * vicinity
-			 */
-			if (hasfound == false) {
-				if (map.getChar(getUPPosition(newposition)) != '.'
-						&& map.getChar(getDownPosition(newposition)) != '.'
-						&& map.getChar(getLeftPosition(newposition)) != '.'
-						&& map.getChar(getRightPosition(newposition)) != '.') {
-					return -1;
-				} else {
-					for (int i = 0; i < map.getHeight(); i++) {
-						for (int j = 0; j < map.getWidth(); j++) {
-							visited[i][j] = false;
 						}
 					}
-					visited[map.getStart().getRow()][map.getStart().getCol()] = true;
+				}
+
+			} else {
+				Position newposition = pq.remove();
+				// move(newposition);
+				for (Movement m : Movement.values()) {
+					temp = getPosition(newposition, m);
+					if ((map.getChar(temp) != '#')
+							&& visited[getPosition(temp, m).getRow()][getPosition(
+									temp, m).getCol()] == false) {
+						/*
+						 * If a checkpoint is found in the vicinity then first
+						 * take that
+						 */
+						if (map.getChar(temp) == '@') {
+
+							pq.add(temp);
+							move(m, '.');
+							coverCheckPoint(temp);
+							heuristic.updateHeuristic(map.getStart(), '@');
+							map.showMap();
+							hasFound = true;
+							visited[temp.getRow()][temp.getCol()] = true;
+
+						} else {
+							if (heuristic.heuristicFunction(temp, p,
+									map.getGoal(), map.getChar(temp)) <= heuristic
+									.getHeuristicValue(p)
+									|| reluctantPath == true) {
+								pq.add(temp);
+								move(m, map.getChar(temp));
+								heuristic.updateHeuristic(map.getStart(),
+										map.getChar(temp));
+								map.showMap();
+								hasFound = true;
+								visited[temp.getRow()][temp.getCol()] = true;
+							}
+
+						}
+
+					}
+				}
+
+				/*
+				 * not even a single move is possible Possible when 1. S is
+				 * bounded by closed path on all sides 2. S has visited all the
+				 * paths in its vicinity
+				 */
+				if (hasFound == false) {
+					for (Movement m : Movement.values()) {
+						if (map.getChar(getPosition(newposition, m)) == '.')
+							hasFound = true;
+					}
+					if (hasFound == true) {
+						for (Movement m : Movement.values()) {
+							if (visited[getPosition(map.getStart(), m).getRow()][getPosition(
+									map.getStart(), m).getCol()] == false) {
+								reluctantPath = true;
+								break;
+							}
+						}
+						if (reluctantPath == false) {
+							InitVisited();
+							visited[map.getStart().getRow()][map.getStart()
+									.getCol()] = true;
+						}
+					}
 				}
 			}
 		}
+
+		move(p, '.');
+		map.showMap();
 		return 1;
 	}
 
-	/*
-	 * admissible heuristic function f(n)=h(n) + g(n) where g(n)=distance
-	 * between current position of 'S' and checkpoint C and h(n) is the distance
-	 * between checkpoint C and goal G At any point the next move is selected
-	 * such that f(n) is less than its previous value and checkpoint C is
-	 * selected such that it has highest value of f(n) to first the checkpoint
-	 * which is farthest
-	 */
+	public void coverCheckPoint(Position p) {
+		map.getCovered()[p.getRow()][p.getCol()] = true;
+	}
 
 	public void start() {
-		// for(Position p:map.getCheckpoint())
+		map.showMap();
+		for (Position p : map.getCheckpoint()) {
+			if (map.getCovered()[p.getRow()][p.getCol()] == false)
+				Search(p);
+		}
+		InitVisited();
+		visited[map.getStart().getRow()][map.getStart().getCol()] = true;
 		Search(map.getGoal());
+
 	}
 
 }
