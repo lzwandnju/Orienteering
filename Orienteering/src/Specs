@@ -15,6 +15,13 @@ An orienteering map is to be given in the following format.
 #@.....#
 ########
 
+##############
+#@.@..@#.....#
+##.SG@####.#.#
+#......#.#.#@#
+#@....@#...#.#
+#..@...#.@...#
+##############
 
 In this problem, an orienteering map is to be given. 
 Calculate the minimum distance from the start to the goal with passing all the checkpoints. 
@@ -150,7 +157,7 @@ Result path (x, y): (1, 2) => (1, 1) => (2, 1) => (3, 1) => (3, 2). The result d
 #####
 #G@@#
 #S###
-#...#
+#..@#
 #####
 
 
@@ -158,6 +165,7 @@ Result path (x, y): (1, 2) => (1, 1) => (2, 1) => (3, 1) => (3, 2). The result d
 
 Result path (x, y): (1, 2) => (1, 1) => (2, 1) => (3, 1) => (2, 1) => (1, 1) => (1, 2) => (1, 3) => (2, 3) 
 => (3, 3). 
+
 
 The result distance is 9, because the player moves 9 times. 
 Start (1, 2), opened-block (1, 1), and checkpoint (2, 1) appear twice each on the result path, but it is 

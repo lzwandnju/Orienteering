@@ -21,6 +21,7 @@ public class Heuristic implements Comparator<Position> {
 			heuristicTable.put(p, heuristicFunction(Start, p, Goal));
 		}
 		goalHeuristic = Position.distance(Start, Goal);
+<<<<<<< HEAD
 	}
 
 	public void setCheckPointHeuristic(Position Start) {
@@ -29,6 +30,23 @@ public class Heuristic implements Comparator<Position> {
 		}
 	}
 
+=======
+	}
+
+	public void setCheckPointHeuristic(Position Start) {
+		for (Position p : heuristicTable.keySet()) {
+			heuristicTable.put(p, heuristicFunction(Start, p, Goal));
+		}
+	}
+
+	public void incChkHeuristic(Position checkPoint){
+		heuristicTable.put(checkPoint, heuristicTable.get(checkPoint)+1);
+	}
+	public void incGoalHeuristic(){
+		goalHeuristic++;
+	}
+	
+>>>>>>> origin/master
 	public int getGoalHeuristic() {
 		return goalHeuristic;
 	}

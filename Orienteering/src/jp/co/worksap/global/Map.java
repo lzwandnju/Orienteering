@@ -42,6 +42,7 @@ public class Map {
 
 	public Map(int width, int height) {
 		super();
+		System.out.println("Enter Map");
 		this.height = height;
 		this.width = width;
 		map = new char[height][width];
@@ -85,13 +86,11 @@ public class Map {
 
 	public void showMap() {
 		System.out.print("  ");
-		for (int i = 0; i < this.width; i++)
-			System.out.print(i);
 		System.out.println();
 		for (int i = 0; i < this.height; i++) {
 			System.out.print(i + " ");
 			for (int j = 0; j < this.width; j++) {
-				System.out.print(map[i][j]);
+				System.out.print(map[i][j] + " ");
 			}
 
 			System.out.println("");
