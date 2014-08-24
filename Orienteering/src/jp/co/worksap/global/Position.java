@@ -54,10 +54,6 @@ public class Position implements Comparable<Position> {
 				- p1.getCol()));
 	}
 	
-	public static void showPosition(Position p){
-		System.out.println("["+p.getRow()+"]["+p.getCol()+"]");
-	}
-
 	@Override
 	public int compareTo(Position o) {
 		if(this.equals(o)==true) return 0;

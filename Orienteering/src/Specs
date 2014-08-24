@@ -17,10 +17,10 @@ An orienteering map is to be given in the following format.
 
 ##############
 #@.@..@#.....#
-##.SG@####.#.#
-#......#.#.#@#
-#@....@#...#.#
-#..@...#.@...#
+##.SG@########
+#####.......@#
+#@.....#####.#
+#..@......@.##
 ##############
 
 In this problem, an orienteering map is to be given. 
@@ -176,8 +176,8 @@ Example3
 <Input> 
 5 5 
 #####
-#S..#
-##G##
+#S@.#
+#G###
 #..@#
 #####
 

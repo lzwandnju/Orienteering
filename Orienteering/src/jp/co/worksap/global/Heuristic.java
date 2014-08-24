@@ -18,35 +18,17 @@ public class Heuristic implements Comparator<Position> {
 		heuristicTable = new Hashtable<Position, Integer>();
 		this.Goal = Goal;
 		for (Position p : checkpoint) {
-			heuristicTable.put(p, heuristicFunction(Start, p, Goal));
+			heuristicTable.put(p, heuristicFunction(Start, p));
 		}
 		goalHeuristic = Position.distance(Start, Goal);
-<<<<<<< HEAD
 	}
 
 	public void setCheckPointHeuristic(Position Start) {
 		for (Position p : heuristicTable.keySet()) {
-			heuristicTable.put(p, heuristicFunction(Start, p, Goal));
+			heuristicTable.put(p, heuristicFunction(Start, p));
 		}
 	}
 
-=======
-	}
-
-	public void setCheckPointHeuristic(Position Start) {
-		for (Position p : heuristicTable.keySet()) {
-			heuristicTable.put(p, heuristicFunction(Start, p, Goal));
-		}
-	}
-
-	public void incChkHeuristic(Position checkPoint){
-		heuristicTable.put(checkPoint, heuristicTable.get(checkPoint)+1);
-	}
-	public void incGoalHeuristic(){
-		goalHeuristic++;
-	}
-	
->>>>>>> origin/master
 	public int getGoalHeuristic() {
 		return goalHeuristic;
 	}
@@ -55,22 +37,14 @@ public class Heuristic implements Comparator<Position> {
 		this.goalHeuristic = Position.distance(startpos, Goal);
 	}
 
-	/*
-	 * admissible heuristic function f(n)=h(n) + g(n) where g(n)=distance
-	 * between current position of 'S' and checkpoint C and h(n) is the distance
-	 * between checkpoint C and goal G At any point the next move is selected
-	 * such that f(n) is less than its previous value and checkpoint C is
-	 * selected such that it has highest value of f(n) to first the checkpoint
-	 * which is farthest
-	 */
+	public int heuristicFunction(Position p1, Position p2) {
 
-	public int heuristicFunction(Position startPos, Position checkPoint,
-			Position Goal) {
-		return (Position.distance(startPos, checkPoint) + Position.distance(
-				checkPoint, Goal));
+		int hsld = (p1.getRow() - p2.getRow()) * (p1.getRow() - p2.getRow())
+				+ (p1.getCol() - p2.getCol()) * (p1.getCol() - p2.getCol());
+
+		return hsld;
 	}
 
-	//Get heuristic value of a checkpoint
 	public int getHeuristicValue(Position checkpoint) {
 		try {
 			return heuristicTable.get(checkpoint);

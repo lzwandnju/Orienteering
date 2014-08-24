@@ -18,15 +18,19 @@ public class Map {
 	private char[][] map;
 	private List<Position> checkpoint;
 	private boolean[][] covered;
+	private int height;
+	private int width;
+	private static final int MAX_CHECKPOINT = 18;
+	private Position start;
+	private Position goal;
 
 	public List<Position> getCheckpoint() {
 		return checkpoint;
 	}
 
-	private final int height;
-	private final int width;
-	private Position start;
-	private Position goal;
+	public static int getMaxCheckpoint() {
+		return MAX_CHECKPOINT;
+	}
 
 	public int getHeight() {
 		return height;
@@ -38,6 +42,14 @@ public class Map {
 
 	public Position getGoal() {
 		return goal;
+	}
+
+	public Position getStart() {
+		return start;
+	}
+
+	public void setStart(Position start) {
+		this.start = start;
 	}
 
 	public Map(int width, int height) {
@@ -63,7 +75,6 @@ public class Map {
 							Position temp = new Position(i, j);
 							checkpoint.add(temp);
 						}
-
 						if (c == 'S')
 							this.start = new Position(i, j);
 						if (c == 'G')
@@ -77,37 +88,12 @@ public class Map {
 			}
 			i++;
 		}
-
 	}
 
 	public boolean[][] getCovered() {
 		return covered;
 	}
 
-	public void showMap() {
-		System.out.print("  ");
-		System.out.println();
-		for (int i = 0; i < this.height; i++) {
-			System.out.print(i + " ");
-			for (int j = 0; j < this.width; j++) {
-				System.out.print(map[i][j] + " ");
-			}
-
-			System.out.println("");
-		}
-	}
-
-	public Position getStart() {
-		return start;
-	}
-
-	public void setStart(Position start) {
-		this.start = start;
-	}
-
-	/*
-	 * Place a given character in a given position
-	 */
 	public void updateMap(Position p, char ch) {
 		map[p.getRow()][p.getCol()] = ch;
 	}
@@ -115,4 +101,5 @@ public class Map {
 	public char getChar(Position p) {
 		return this.map[p.getRow()][p.getCol()];
 	}
+
 }
